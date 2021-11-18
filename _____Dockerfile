@@ -1,0 +1,19 @@
+FROM node:latest
+
+# Bundle APP files
+WORKDIR /var/www/html
+#COPY package*.json ./
+COPY . .
+
+
+# Install app dependencies
+RUN apt install wget
+RUN  wget  https://registry.npmjs.org/@babel/plugin-syntax-nullish-coalescing-operator/-/plugin-syntax-nullish-coalescing-operator-7.8.3.tgz
+RUN npm install
+#RUN '/bin/sh -c npm install'
+# Expose the listening port of your app
+EXPOSE 2000
+
+# Show current folder structure in logs
+
+CMD [ "sh", "pm2-startup.sh" ]
