@@ -40,7 +40,12 @@ class ExpressApp {
     this.app.use('/', routes);
 
     this.app.get('/ab(cd)?e', (req, res) => {
-      res.json({ success: true, message: 'success' });
+      res.json({ 
+	  success: true, 
+	  message: 'success',
+      node_env: process.env.NODE_ENV,
+      custom_env: process.env.MY_ENV, 
+	  });
     });
 
     // catch 404 and forward to error handler

@@ -1,5 +1,4 @@
 #!/bin/bash
-#######
-cd /app ;
+cd /var/www/html/api ;
 npm install;
 npm start;
