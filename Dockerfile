@@ -26,7 +26,7 @@ apt-get autoremove -y && \
 apt-get clean && \
 apt-get autoclean
 
-RUN useradd -r -u 1001 -g node node
+RUN useradd -r -u 1001 node
 
 USER node
 
