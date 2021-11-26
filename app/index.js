@@ -33,11 +33,15 @@ class ExpressApp {
     this.app.use(cookieParser());
     this.app.use(express.static(path.join(__dirname, 'public')));
 
+    this.app.get('/', (req, res) => {
+      res.json({ success: true, message: 'working' });
+    });
+
     this.app.get('heartbeat', (req, res) => {
       res.json({ success: true, message: 'working' });
     });
 
-    this.app.use('/', routes);
+    // this.app.use('/', routes);
 
     this.app.get('/ab(cd)?e', (req, res) => {
       res.json({ 
