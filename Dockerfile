@@ -10,7 +10,7 @@ COPY . /app/.
 
 RUN npm install
 
-RUN npm run build
+RUN npm run build:stage
 
 
 # The production image
@@ -27,7 +27,6 @@ apt-get clean && \
 apt-get autoclean
 
 
-
 RUN npm install pm2 -g
 
 RUN mkdir /app/
@@ -36,11 +35,10 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-COPY --from=builder /app /app
+COPY --from=builder /app/dist/ /app
 
-RUN npm ci --only=production
+RUN npm install --production
 
 EXPOSE 9000
 
-CMD ["npm", "start"]
-
+CMD [ "pm2-runtime", "start", "ecosystem.config.js"]
