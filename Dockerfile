@@ -26,9 +26,7 @@ apt-get autoremove -y && \
 apt-get clean && \
 apt-get autoclean
 
-RUN useradd -r  -d /home/node -s /bin/bash -g root -G sudo -u 1001 node
 
-USER node
 
 RUN npm install pm2 -g
 
