@@ -1,33 +1,48 @@
-FROM ubuntu
+# We're using a multi-stage build so that we can install dependencies during build-time only for production.
 
-RUN apt-get update && \
-apt -y install curl && \
-apt-get install -y software-properties-common wget curl && \
-curl -fsSL https://deb.nodesource.com/setup_15.x | bash - && \
-apt-get install -y nodejs && \
-apt-get autoremove -y && \
-apt-get clean && \
-apt-get autoclean
+# The build image
 
-RUN npm install pm2 -g
+FROM node:14-alpine as builder
 
-WORKDIR app
+WORKDIR /app
 
-COPY .  /app/.
-RUN mkdir -p /app/public/upload/temp_files
-RUN mkdir -p /app/public/cache/temp
-RUN mkdir -p /app/public/logs/queries
-RUN mkdir -p /app/public/logs/requests
-
+COPY . /app/.
 
 RUN npm install
 
 RUN npm run build
 
 
+# The production image
 
-EXPOSE 3000
+FROM ubuntu
 
+RUN apt-get update && \
+apt -y install curl && \
+apt-get install -y software-properties-common wget curl && \
+curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
+apt-get install -y nodejs && \
+apt-get autoremove -y && \
+apt-get clean && \
+apt-get autoclean
 
-CMD [ "pm2-runtime", "start", "ecosystem.config.js"]
+RUN useradd -r -u 1001 -g node node
+
+USER node
+
+RUN npm install pm2 -g
+
+RUN mkdir /app/
+
+WORKDIR /app
+
+ENV NODE_ENV production
+
+COPY --from=builder /app /app
+
+RUN npm ci --only=production
+
+EXPOSE 9000
+
+CMD ["npm", "start"]
 
